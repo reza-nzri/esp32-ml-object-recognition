@@ -6,10 +6,11 @@ Starts the app, connects hardware modules, and runs the main control loop for ML
 
 from machine import Pin, Timer
 
-led = Pin(2, Pin.OUT)  # internal LED on pin 2
+led = Pin(1, Pin.OUT)  # internal LED
 
 def blink(timer):
     led.value(not led.value())
 
 timer = Timer(0)
 timer.init(freq=2, mode=Timer.PERIODIC, callback=blink)
+
