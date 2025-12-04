@@ -1,16 +1,45 @@
-"""
-Entry point for the ESP32 application.
+import time
+from utils import PinAssignment, StepperMotor, UltrasonicSensor
 
-Starts the app, connects hardware modules, and runs the main control loop for ML inference and sensor interaction.
-"""
 
-from machine import Pin, Timer
+def scan_one_revolution(motor, sensor):
+    """Rotate one full revolution and measure distance at each step."""
+    steps_per_rev = motor.steps_per_rev  # 4096 for 28BYJ-48 (half-step)
 
-led = Pin(1, Pin.OUT)  # internal LED
+    for _ in range(steps_per_rev):
+        # Move motor by one logical step
+        step_count, angle_deg = motor.rotate(run=True, direction=1)
 
-def blink(timer):
-    led.value(not led.value())
+        # Measure distance with ultrasonic sensor
+        distance = sensor.measure_distance()
 
-timer = Timer(0)
-timer.init(freq=2, mode=Timer.PERIODIC, callback=blink)
+        # Print result to serial console
+        if distance is None:
+            print(f"Step: {step_count}, Angle: {angle_deg:.2f}°, Distance: No echo")
+        else:
+            print(f"Step: {step_count}, Angle: {angle_deg:.2f}°, Distance: {distance:.2f} cm")
 
+        # Small pause to avoid flooding the serial output (motor speed is set in StepperMotor)
+        time.sleep_ms(5)
+
+    # After one revolution: stop motor (turn off coils)
+    motor.rotate(run=False, direction=1)
+
+
+def main():
+    pins = PinAssignment()
+    motor = StepperMotor(in1=pins.IN1, in2=pins.IN2, in3=pins.IN3, in4=pins.IN4, delay_ms=3)
+    sensor = UltrasonicSensor(trigger_pin=pins.TRIGGER_PIN, echo_pin=pins.ECHO_PIN)
+
+    print("Starting continuous scans (one full revolution per scan)...\n")
+
+    # Repeat scans forever (for data collection / testing)
+    while True:
+        print("\t=== New scan: One full revolution ===")
+        scan_one_revolution(motor, sensor)
+        print("\t\t=== Scan finished. Waiting 2 seconds... ===\n")
+        time.sleep(2)
+
+
+if __name__ == "__main__":
+    main()
