@@ -36,7 +36,7 @@ class UltrasonicSensor:
             return None
 
         # Convert ms to cm
-        distance_cm: float = (duration / 2) * 0.0343    # 343 m/s: (Datasheet) Speed ​​of sound in air in 20°
+        distance_cm: float = (duration * 0.0343) / 2    # 343 m/s: (Datasheet) Speed ​​of sound in air in 20°
         return distance_cm
 
 
