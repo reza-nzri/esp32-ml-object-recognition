@@ -1,5 +1,5 @@
 import time
-from utils import PinAssignment, StepperMotor, UltrasonicSensor
+from utils import PinAssignment, StepperMotor, UltrasonicSensor, Data
 
 
 def scan_one_revolution(motor, sensor):
@@ -13,12 +13,14 @@ def scan_one_revolution(motor, sensor):
         # Measure distance with ultrasonic sensor
         distance = sensor.measure_distance()
 
+        # Reads measurements into Dataframe
+        Data.reading(distance=distance, step=step_count)
+
         # Print result to serial console
         if distance is None:
             print(f"Step: {step_count}, Angle: {angle_deg:.2f}°, Distance: No echo")
         else:
             print(f"Step: {step_count}, Angle: {angle_deg:.2f}°, Distance: {distance:.2f} cm")
-
         # Small pause to avoid flooding the serial output (motor speed is set in StepperMotor)
         time.sleep_ms(5)
 
