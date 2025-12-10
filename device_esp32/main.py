@@ -2,7 +2,7 @@ import time
 from utils import PinAssignment, StepperMotor, UltrasonicSensor, Data
 
 
-def scan_one_revolution(motor, sensor):
+def scan_one_revolution(motor, sensor, data):
     """Rotate one full revolution and measure distance at each step."""
     steps_per_rev = motor.steps_per_rev  # 4096 for 28BYJ-48 (half-step)
 
@@ -14,7 +14,7 @@ def scan_one_revolution(motor, sensor):
         distance = sensor.measure_distance()
 
         # Reads measurements into Dataframe
-        Data.reading(distance=distance, step=step_count)
+        data.reading(distance=distance, step=step_count)
 
         # Print result to serial console
         if distance is None:
@@ -32,13 +32,13 @@ def main():
     pins = PinAssignment()
     motor = StepperMotor(in1=pins.IN1, in2=pins.IN2, in3=pins.IN3, in4=pins.IN4, delay_ms=3)
     sensor = UltrasonicSensor(trigger_pin=pins.TRIGGER_PIN, echo_pin=pins.ECHO_PIN)
+    data = Data()
 
     print("Starting continuous scans (one full revolution per scan)...\n")
 
-    # Repeat scans forever (for data collection / testing)
     while True:
         print("\t=== New scan: One full revolution ===")
-        scan_one_revolution(motor, sensor)
+        scan_one_revolution(motor, sensor, data)
         print("\t\t=== Scan finished. Waiting 2 seconds... ===\n")
         time.sleep(2)
 
