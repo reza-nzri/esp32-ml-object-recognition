@@ -23,6 +23,9 @@ uv sync
 uv run jupyter lab
 uv run jupyter notebook
 
+# activate .venv
+.\.venv\Scripts\activate
+
 ## or you can run train
 uv run python src/train.py
 
