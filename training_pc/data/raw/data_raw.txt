@@ -1,2 +1,0 @@
-DummyText for Git!
-sensor/motor logs from ESP32
