@@ -3,14 +3,15 @@ import pandas as pd
 
 class Data:
     """
-    Class for reading data into dataframe.
+    Class for reading and transforming data.
     """
 
     def __init__(self):
         """
-        Initializes empty Dataframe with columns distance (1) and step(2).
+        Initializes empty Dataframe with columns distance and step.
         """
         self.df = pd.DataFrame(columns=["distance", "step"])
+
 
     def reading(self, distance: float, step: int):
         """
@@ -29,12 +30,10 @@ class Data:
         })
         self.df = pd.concat([self.df, new_row], ignore_index=True)
 
+
     def get_dataframe(self):
         """
-        Returns Dataframe with measurements.
-        Returns:
-            pd.DataFrame: (pd.DataFrame).
+        Returns Dataframe with measurements
+        :return: pd.DataFrame.
         """
         return self.df
-
-
