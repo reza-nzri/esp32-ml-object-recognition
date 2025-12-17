@@ -105,7 +105,7 @@ class StepperMotor:
 
             sleep_ms(self.delay_ms)
         
-        # compute angle
+        # compute angle ==> 1 step = 0.088° | 4096 steps = 360°
         angle = (self._step_count % self.steps_per_rev) * (360 / self.steps_per_rev)
         
         return self._step_count, angle

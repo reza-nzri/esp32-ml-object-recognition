@@ -21,10 +21,10 @@ def scan_one_revolution(motor, sensor, scan_id: int = 0) -> None:
 
         # Print result to serial console (CSV-style line)
         if distance is None:
-            print(f"{scan_id},{step_count},{angle_deg:.2},NaN")
+            print(f"{scan_id},{step_count},{angle_deg:.2f},NaN")
             # print(f"Step: {step_count}, Angle: {angle_deg:.2f}°, Distance: No echo")
         else:
-            print(f"{scan_id},{step_count},{angle_deg:.2},{distance:.2f}")
+            print(f"{scan_id},{step_count},{angle_deg:.2f},{distance:.2f}")
             # print(f"Step: {step_count}, Angle: {angle_deg:.2f}°, Distance: {distance:.2f} cm")
         # Small pause to avoid flooding the serial output (motor speed is set in StepperMotor)
         time.sleep_ms(5)
@@ -41,11 +41,12 @@ def main():
     sensor = UltrasonicSensor(trigger_pin=pins.TRIGGER_PIN, echo_pin=pins.ECHO_PIN)
 
     scan_id = 0
+    print("\n")
     print("# Starting continuous scans (one full revolution per scan)...\n")
     print("scan_id,step,angle_deg,distance_cm")  # CSV header
     
     while True:
-        scan_one_revolution(motor, sensor)
+        scan_one_revolution(motor, sensor, scan_id)
         scan_id += 1
         time.sleep(2)  # pause between scans
 
