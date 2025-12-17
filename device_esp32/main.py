@@ -31,7 +31,7 @@ def scan_one_revolution(motor, sensor, scan_id: int = 0) -> None:
 
     # turn off coils after one full revolution
     motor.rotate(run=False, direction=1)
-    print(f"# Finished scan {scan_id}\n")
+    print(f"\n# Finished scan {scan_id}\n")
 
 
 def main():
