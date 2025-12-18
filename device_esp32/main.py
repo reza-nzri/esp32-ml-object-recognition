@@ -2,7 +2,7 @@ import time
 from utils import PinAssignment, StepperMotor, UltrasonicSensor
 
 
-def scan_one_revolution(motor, sensor, scan_id: int = 0, measure_every: int = 10, file_handle=None) -> None:
+def scan_one_revolution(motor, sensor, scan_id: int = 0, measure_every: int = 10, file_handle=None, filename: str = "scan_data.csv") -> None:
     """Rotate one full revolution and measure distance at each step.
     
     Args:
@@ -11,6 +11,9 @@ def scan_one_revolution(motor, sensor, scan_id: int = 0, measure_every: int = 10
         scan_id (int): Identifier for this scan (for logging and later ML use).
     """
     steps_per_rev = motor.steps_per_rev  # 4096 for 28BYJ-48 (half-step)
+
+    # open csv file
+    file_handle = open(filename, 'a')
 
     for step in range(steps_per_rev):
         # Move motor by one logical step
@@ -31,11 +34,13 @@ def scan_one_revolution(motor, sensor, scan_id: int = 0, measure_every: int = 10
                 print(f"{scan_id},{step_count},{angle_deg:.2f},{distance:.2f}")
             # print(f"Step: {step_count}, Angle: {angle_deg:.2f}°, Distance: {distance:.2f} cm")
 
-            if file_handle:
-                file_handle.write(csv_line)
-                file_handle.flush()
+            # save measurements in csv file
+            file_handle.write(csv_line + "\n")
+        
         # Small pause to avoid flooding the serial output (motor speed is set in StepperMotor)
             time.sleep_ms(5)
+
+    file_handle.close()
 
     # turn off coils after one full revolution
     motor.rotate(run=False, direction=1)
@@ -52,23 +57,21 @@ def main():
 
     filename = "scan_data.csv"
 
-    try:
-        with open(filename, "w") as f:
-            f.write("scan_id,step,angle_deg,distance_cm\n")
-            f.flush
-        print("\n")
-        print("# Starting continuous scans (one full revolution per scan)...\n")
-        print("scan_id,step,angle_deg,distance_cm")  # CSV header
-    
-        while True:
-            scan_one_revolution(motor, sensor, scan_id)
-            scan_id += 1
-            time.sleep(2)  # pause between scans
+    #write CSV header
+    file_handle = open(filename, 'w')
+    file_handle.write("scan_id,step,angle_deg,distance_cm\n")
+    file_handle.close()
 
-    except KeyboardInterrupt:
-        print("\n# Program stopped by user")
-    finally:
-        print(f"# Data saved to {filename}")
+    print("\n")
+    print("# Starting continuous scans (one full revolution per scan)...\n")
+    print("scan_id,step,angle_deg,distance_cm")  # CSV header
+
+
+    #scan object 5 times
+    for _ in range(5):
+        scan_one_revolution(motor, sensor, scan_id)
+        scan_id += 1
+        time.sleep(2)  # pause between scans
 
 
 if __name__ == "__main__":
