@@ -14,7 +14,7 @@ class LiveUltrasonicLogger:
     """
     def __init__(
         self,
-        port: str = "COM11",
+        port: str = "COM8",
         baudrate: int = 115200,
         max_points: int = 800,
     ):
