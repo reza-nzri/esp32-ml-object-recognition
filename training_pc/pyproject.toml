@@ -10,5 +10,26 @@ dependencies = [
     "notebook>=7.5.0",
     "numpy>=2.3.5",
     "pandas>=2.3.3",
+    "pyserial>=3.5",
     "scikit-learn>=1.8.0",
 ]
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.5.1",
+]
+lint = [
+    "ruff>=0.14.10",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+extend-exclude = [".venv"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+ignore = ["E501"]
+
+[tool.ruff.format]
+docstring-code-format = true

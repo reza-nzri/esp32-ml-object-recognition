@@ -1,13 +1,15 @@
 from machine import time_pulse_us
 import time
 
+
 class UltrasonicSensor:
     """HC-SR04 ultrasonic distance sensor driver.
-    
+
     Attributes:
         trigger (Pin): Output pin used for sending the trigger pulse.
         echo (Pin): Input pin used to receive the echo pulse.
     """
+
     def __init__(self, trigger_pin, echo_pin) -> None:
         self.trigger = trigger_pin
         self.echo = echo_pin
@@ -17,9 +19,9 @@ class UltrasonicSensor:
         time.sleep_ms(2)
 
     def measure_distance(self):
-        """ Sends a 10 µs trigger pulse, measures echo duration,
+        """Sends a 10 µs trigger pulse, measures echo duration,
         and converts it into distance in centimeters.
-        
+
         Returns:
             distance_cm: Distance in centimeters, or None if no echo detected.
         """
@@ -36,12 +38,15 @@ class UltrasonicSensor:
             return None
 
         # Convert ms to cm
-        distance_cm: float = (duration * 0.0343) / 2    # 343 m/s: (Datasheet) Speed ​​of sound in air in 20°
+        distance_cm: float = (
+            duration * 0.0343
+        ) / 2  # 343 m/s: (Datasheet) Speed ​​of sound in air in 20°
         return distance_cm
 
 
 if __name__ == "__main__":
     from pin_assignment import PinAssignment
+
     pins = PinAssignment()
     sensor = UltrasonicSensor(trigger_pin=pins.TRIGGER_PIN, echo_pin=pins.ECHO_PIN)
 

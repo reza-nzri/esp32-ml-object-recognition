@@ -1,5 +1,5 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 
 class Data:
@@ -15,7 +15,6 @@ class Data:
         self.steps_per_revolution = steps_per_revolution
         self.step_angle = step_angle
 
-
     def reading(self, distance: float, step: int):
         """
         Reads arguments into DataFrame.
@@ -28,13 +27,8 @@ class Data:
             None: (None).
         """
         angle = step * self.step_angle
-        new_row =pd.DataFrame({
-            "step": [step],
-            "angle": [angle],
-            "distance": [distance]
-        })
+        new_row = pd.DataFrame({"step": [step], "angle": [angle], "distance": [distance]})
         self.df = pd.concat([self.df, new_row], ignore_index=True)
-
 
     def get_dataframe(self):
         """
@@ -51,8 +45,8 @@ class Data:
         Returns:
             Dataframe with additional column 'normalized'
         """
-        mean_distance = self.df['distance'].mean()
-        self.df['normalized'] = self.df['distance'] / mean_distance
+        mean_distance = self.df["distance"].mean()
+        self.df["normalized"] = self.df["distance"] / mean_distance
 
         return self.df
 
@@ -64,9 +58,9 @@ class Data:
             Dataframe with corrected normal values
         """
         # conversion to cartesian coordinates
-        angles_rad = np.radians(self.df['angle'])
-        x_coords = self.df['distance'] * np.cos(angles_rad)
-        y_coords = self.df['distance'] * np.sin(angles_rad)
+        angles_rad = np.radians(self.df["angle"])
+        x_coords = self.df["distance"] * np.cos(angles_rad)
+        y_coords = self.df["distance"] * np.sin(angles_rad)
 
         # calculating geometric centre
         centre_x = x_coords.mean()
@@ -75,14 +69,14 @@ class Data:
         # calculate corrected distances
         delta_x = x_coords - centre_x
         delta_y = y_coords - centre_y
-        corrected_distances = np.sqrt(delta_x ** 2 + delta_y ** 2)
+        corrected_distances = np.sqrt(delta_x**2 + delta_y**2)
 
         # add corrected distance to dataframe
-        self.df['distance_corrected'] = corrected_distances
+        self.df["distance_corrected"] = corrected_distances
 
         # apply normal to corrected data
         mean_distance = corrected_distances.mean()
-        self.df['normalized'] = corrected_distances / mean_distance
+        self.df["normalized"] = corrected_distances / mean_distance
 
         return self.df
 

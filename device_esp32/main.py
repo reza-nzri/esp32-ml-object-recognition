@@ -2,75 +2,70 @@ import time
 from utils import PinAssignment, StepperMotor, UltrasonicSensor
 
 
-def scan_one_revolution(motor, sensor, scan_id: int = 0, measure_every: int = 10, file_handle=None, filename: str = "scan_data.csv") -> None:
-    """Rotate one full revolution and measure distance at each step.
-    
+def scan_one_revolution(
+    motor,
+    sensor,
+    scan_index: int = 0,
+    measure_every: int = 10,
+) -> None:
+    """Perform one full 360° scan using a stepper motor and ultrasonic sensor.
+
+    The motor performs a full revolution using its native step resolution.
+    Distance measurements are taken only every N motor steps to reduce
+    data redundancy and noise for machine learning applications.
+
+    Only steps where a measurement is taken are logged (printed),
+    ensuring correct semantic alignment between angle and distance.
+
     Args:
         motor (StepperMotor): The initialized stepper motor instance.
         sensor (UltrasonicSensor): The initialized ultrasonic sensor instance.
-        scan_id (int): Identifier for this scan (for logging and later ML use).
+        scan_index (int): Index of the current scan iteration (used to group samples belonging to the same full rotation).
+        measure_every (int): Take one measurement every N motor steps.
     """
     steps_per_rev = motor.steps_per_rev  # 4096 for 28BYJ-48 (half-step)
 
-    # open csv file
-    file_handle = open(filename, 'a')
-
     for step in range(steps_per_rev):
-        # Move motor by one logical step
+        # Move motor by one physical/logical step
         step_count, angle_deg = motor.rotate(run=True, direction=1)
 
-        #Only measure every Nth step
-        if step % measure_every == 0:
+        # Only measure every Nth step
+        if step_count % measure_every == 0:
             # Measure distance with ultrasonic sensor
-            distance = sensor.measure_distance()
+            distance_cm = sensor.measure_distance()
 
             # Print result to serial console (CSV-style line)
-            if distance is None:
-                csv_line = f"{scan_id},{step_count},{angle_deg:.2f},NaN"
-                print(f"{scan_id},{step_count},{angle_deg:.2f},NaN")
-            # print(f"Step: {step_count}, Angle: {angle_deg:.2f}°, Distance: No echo")
+            if distance_cm is None:
+                print(f"{scan_index},{step_count},{angle_deg:.2f},NaN")
             else:
-                csv_line = f"{scan_id},{step_count},{angle_deg:.2f},{distance:.2f}"
-                print(f"{scan_id},{step_count},{angle_deg:.2f},{distance:.2f}")
-            # print(f"Step: {step_count}, Angle: {angle_deg:.2f}°, Distance: {distance:.2f} cm")
+                print(f"{scan_index},{step_count},{angle_deg:.2f},{distance_cm:.2f}")
 
-            # save measurements in csv file
-            file_handle.write(csv_line + "\n")
-        
-        # Small pause to avoid flooding the serial output (motor speed is set in StepperMotor)
+            # Small pause to avoid flooding the serial output (motor speed is set in StepperMotor)
             time.sleep_ms(5)
-
-    file_handle.close()
 
     # turn off coils after one full revolution
     motor.rotate(run=False, direction=1)
-    print(f"\n# Finished scan {scan_id}\n")
+    print(f"\n# Finished scan {scan_index}\n")
 
 
 def main():
     """Main loop of the ESP32 program."""
     pins = PinAssignment()
-    motor = StepperMotor(in1=pins.IN1, in2=pins.IN2, in3=pins.IN3, in4=pins.IN4, delay_ms=3)
+    motor = StepperMotor(
+        in1=pins.IN1, in2=pins.IN2, in3=pins.IN3, in4=pins.IN4, delay_ms=3
+    )
     sensor = UltrasonicSensor(trigger_pin=pins.TRIGGER_PIN, echo_pin=pins.ECHO_PIN)
 
-    scan_id = 0
-
-    filename = "scan_data.csv"
-
-    #write CSV header
-    file_handle = open(filename, 'w')
-    file_handle.write("scan_id,step,angle_deg,distance_cm\n")
-    file_handle.close()
+    scan_index = 0
 
     print("\n")
     print("# Starting continuous scans (one full revolution per scan)...\n")
-    print("scan_id,step,angle_deg,distance_cm")  # CSV header
+    print("scan_index,step,angle_deg,distance_cm")  # CSV header
 
-
-    #scan object 5 times
+    # scan object only 5 times
     for _ in range(5):
-        scan_one_revolution(motor, sensor, scan_id)
-        scan_id += 1
+        scan_one_revolution(motor, sensor, scan_index, 10)
+        scan_index += 1
         time.sleep(2)  # pause between scans
 
 

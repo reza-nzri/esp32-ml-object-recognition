@@ -1,7 +1,7 @@
-import os
 import glob
-import pandas as pd
+import os
 
+import pandas as pd
 
 # Automatically select the latest file
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

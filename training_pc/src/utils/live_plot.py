@@ -1,9 +1,10 @@
 import csv
-import serial
 import time
-import matplotlib.pyplot as plt
 from collections import deque
 from pathlib import Path
+
+import matplotlib.pyplot as plt
+import serial
 
 
 class LiveUltrasonicLogger:
@@ -12,6 +13,7 @@ class LiveUltrasonicLogger:
     logs it continuously to a CSV file, and visualizes the
     measurements in real time using Matplotlib.
     """
+
     def __init__(
         self,
         port: str = "COM8",
@@ -23,9 +25,7 @@ class LiveUltrasonicLogger:
         self.max_points = max_points
 
         self.csv_path = (
-            Path(__file__).resolve().parent
-            .joinpath("..", "..", "data", "raw")
-            .resolve()
+            Path(__file__).resolve().parent.joinpath("..", "..", "data", "raw").resolve()
             / f"esp32_scan_{time.strftime('%Y%m%d_%H%M%S')}.csv"
         )
         self.csv_path.parent.mkdir(parents=True, exist_ok=True)
@@ -45,9 +45,9 @@ class LiveUltrasonicLogger:
         # Enable interactive plotting mode
         plt.ion()
         fig, ax = plt.subplots()
-        
+
         # Initialize an empty line object for live updates
-        line, = ax.plot([], [], "-o", markersize=2)
+        (line,) = ax.plot([], [], "-o", markersize=2)
         ax.set_xlabel("step")
         ax.set_ylabel("distance_cm")
         ax.set_title("Live Ultrasonic Measurement")
@@ -56,9 +56,9 @@ class LiveUltrasonicLogger:
         # Open CSV file for continuous logging
         with open(self.csv_path, "w", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
-            
+
             # Write CSV header once at the beginning
-            writer.writerow(["scan_id", "step", "angle_deg", "distance_cm"])
+            writer.writerow(["scan_index", "step", "angle_deg", "distance_cm"])
 
             try:
                 # Main loop: runs until interrupted by the user
@@ -74,7 +74,7 @@ class LiveUltrasonicLogger:
                         continue
 
                     # Ignore repeated CSV headers sent by the device
-                    if raw.lower().startswith("scan_id"):
+                    if raw.lower().startswith("scan_index"):
                         continue
 
                     # Expect exactly four comma-separated values
@@ -82,11 +82,11 @@ class LiveUltrasonicLogger:
                     if len(parts) != 4:
                         continue
 
-                    scan_id_str, step_str, angle_str, dist_str = parts
+                    scan_index_str, step_str, angle_str, dist_str = parts
 
                     # Convert incoming strings to numeric values
                     try:
-                        scan_id = int(scan_id_str)
+                        scan_index = int(scan_index_str)
                         step = int(step_str)
                         angle = float(angle_str)
                         distance = float(dist_str) if dist_str != "NaN" else float("nan")
@@ -94,7 +94,7 @@ class LiveUltrasonicLogger:
                         continue  # Skip malformed data
 
                     # Write every measurement to the CSV file (always log; including NaN is OK)
-                    writer.writerow([scan_id, step, angle, distance])
+                    writer.writerow([scan_index, step, angle, distance])
                     f.flush()  # # Ensure data is written immediately to disk
 
                     # # Skip NaN values for live plotting

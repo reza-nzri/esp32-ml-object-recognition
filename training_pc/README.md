@@ -21,17 +21,17 @@ You're ready to train!
 
 ### Live Plot Sources
 
-- [pySerial – Official Documentation](https://pyserial.readthedocs.io/en/latest/shortintro.html)  
+- [pySerial – Official Documentation](https://pyserial.readthedocs.io/en/latest/shortintro.html)
   Serielle Kommunikation mit dem ESP32, Einlesen von Daten über `readline()` und Dekodierung von Terminal-Ausgaben.
 
-- [Python csv Module – Official Documentation](https://docs.python.org/3/library/csv.html)  
+- [Python csv Module – Official Documentation](https://docs.python.org/3/library/csv.html)
   Strukturierte Speicherung von Messdaten in CSV-Dateien während einer laufenden Messung.
 
-- [Matplotlib – Interactive Mode](https://matplotlib.org/stable/users/explain/interactive.html)  
+- [Matplotlib – Interactive Mode](https://matplotlib.org/stable/users/explain/interactive.html)
   Echtzeit-Visualisierung durch interaktiven Plot-Modus (`plt.ion()`, `plt.pause()`).
 
-- [Matplotlib – Simple Animation Examples](https://matplotlib.org/stable/gallery/animation/simple_anim.html)  
+- [Matplotlib – Simple Animation Examples](https://matplotlib.org/stable/gallery/animation/simple_anim.html)
   Dynamisches Aktualisieren von Plot-Elementen während eines kontinuierlichen Datenstroms.
 
-- [Python collections.deque – Official Documentation](https://docs.python.org/3/library/collections.html#collections.deque)  
+- [Python collections.deque – Official Documentation](https://docs.python.org/3/library/collections.html#collections.deque)
   Einsatz eines Sliding-Window-Buffers (`deque(maxlen=...)`) für stabile Live-Plots.

@@ -1,4 +1,4 @@
-scan_id,step,angle_deg,distance_cm
+scan_index,step,angle_deg,distance_cm
 0,1,0.09,8.68
 0,11,0.97,8.70
 0,21,1.85,8.70

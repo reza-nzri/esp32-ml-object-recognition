@@ -1,14 +1,15 @@
 from machine import Pin
 
+
 class PinAssignment:
     """
     A class to define and manage pin assignments.
-    
+
     Attributes:
         TRIGGER_PIN: For the ultrasonic sensor.
         ECHO_PIN: For the ultrasonic sensor.
     """
-    
+
     def __init__(self):
         """
         Initializes the PinAssignment class by setting up the GPIO pins.
