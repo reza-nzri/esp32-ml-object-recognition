@@ -6,7 +6,7 @@ def scan_one_revolution(
     motor,
     sensor,
     scan_index: int = 0,
-    measure_every: int = 10,
+    measure_every: int = 25,
 ) -> None:
     """Perform one full 360° scan using a stepper motor and ultrasonic sensor.
 
@@ -57,14 +57,19 @@ def main():
     sensor = UltrasonicSensor(trigger_pin=pins.TRIGGER_PIN, echo_pin=pins.ECHO_PIN)
 
     scan_index = 0
+    waiting_time = 20
 
     print("\n")
-    print("# Starting continuous scans (one full revolution per scan)...\n")
+    print(
+        f"# Starting continuous scans in {waiting_time}s (one full revolution per scan)...\n"
+    )
+    time.sleep(waiting_time)
     print("scan_index,step,angle_deg,distance_cm")  # CSV header
 
-    # scan object only 5 times
-    for _ in range(5):
-        scan_one_revolution(motor, sensor, scan_index, 10)
+    # Scan object only 8 times
+    # More scans reduce noise, not angle resolution.
+    for _ in range(8):
+        scan_one_revolution(motor, sensor, scan_index)
         scan_index += 1
         time.sleep(2)  # pause between scans
 
