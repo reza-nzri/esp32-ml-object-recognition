@@ -5,6 +5,7 @@ from sklearn.model_selection import KFold
 from .data_processing import SmartAugmentor
 import numpy as np
 
+# **TODO** Look up Batches in CNN
 def get_augmented_batch(X, y, batch_size=32):
     while True:
         idx = np.random.choice(len(X), batch_size)
@@ -16,12 +17,14 @@ def get_augmented_batch(X, y, batch_size=32):
             batch_X[i] = SmartAugmentor.jitter_scale(batch_X[i])
         yield batch_X, batch_y
 
+  #  **TODO** Look up, understand model structure
 def build_model(hp):
     """Factory function for the Multi-Scale 1D-CNN architecture."""
     inputs = keras.Input(shape=(163, 1))
     path_outputs = []
 
     # Hyperparameter: Number of parallel feature paths
+    # **TODO** look upü "pipe" structure
     for i in range(hp.Int('num_paths', 2, 4)):
         kernel_size = hp.Choice(f'kernel_{i}', [3, 7, 11, 15])
         filters = hp.Int(f'filters_{i}', 16, 64, step=16)
@@ -29,7 +32,7 @@ def build_model(hp):
         x = layers.Conv1D(filters, kernel_size, padding='same', activation='relu')(inputs)
         x = layers.BatchNormalization()(x)
         path_outputs.append(x)
-
+    # ** TODO** Look up structure of neural networks and activation functions (especially convolutional neural network)
     merged = layers.Concatenate()(path_outputs)
     x = layers.GlobalMaxPooling1D()(merged)  # Invariance to scan starting position
 

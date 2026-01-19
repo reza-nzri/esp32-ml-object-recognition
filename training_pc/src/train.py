@@ -61,9 +61,9 @@ def run_training():
         verbose=1
     )
 
-    if not os.path.exists("src/models"):
-        os.makedirs("src/models")
-    best_model.save("../models/best_shape_model.keras")
+    if not os.path.exists("models"):
+        os.makedirs("models")
+    best_model.save("models/best_shape_model.keras")
 
     class_names = sorted(SHAPE_DIRS.keys())
     dashboard = PerformanceDashboard(tuner, best_model, X, y, class_names)
