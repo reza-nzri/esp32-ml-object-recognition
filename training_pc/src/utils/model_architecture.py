@@ -24,7 +24,7 @@ def build_model(hp):
     path_outputs = []
 
     # Hyperparameter: Number of parallel feature paths
-    # **TODO** look upü "pipe" structure
+    # **TODO** look up "pipe" structure
     for i in range(hp.Int('num_paths', 2, 4)):
         kernel_size = hp.Choice(f'kernel_{i}', [3, 7, 11, 15])
         filters = hp.Int(f'filters_{i}', 16, 64, step=16)

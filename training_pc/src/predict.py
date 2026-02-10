@@ -30,7 +30,7 @@ def predict_shape(csv_path, model_path="models/best_shape_model.keras"):
     # 4. print result
     print("\n" + "=" * 30)
     print(f"RESULT FOR: {os.path.basename(csv_path)}")
-    print(f"Form: {class_names[predicted_idx].upper()}")
+    print(f"Predicted form: {class_names[predicted_idx].upper()}")
     print(f"Confidence: {confidence:.2f}%")
     print("=" * 30)
 

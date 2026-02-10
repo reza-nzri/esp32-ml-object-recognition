@@ -14,7 +14,7 @@ SHAPE_DIRS = {
     "hexagon": "hexagon",
     "oval": "oval",
     "square": "square",
-    "triangle": "traingle"
+    "triangle": "triangle"
 }
 
 
