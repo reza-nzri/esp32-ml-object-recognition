@@ -2,6 +2,7 @@ import os
 import datetime
 import tensorflow as tf
 import keras_tuner as kt
+from sklearn.model_selection import train_test_split  # Neu hinzugefügt
 from utils.data_processing import DataProcessor
 from utils.model_architecture import build_model, HighPerfTuner
 from visualizations import PerformanceDashboard
@@ -12,15 +13,17 @@ BASE_DATA_PATH = os.path.join("data", "raw", "objects")
 SHAPE_DIRS = {
     "circle": "circle",
     "hexagon": "hexagon",
-    "oval": "oval",
     "square": "square",
-    "triangle": "triangle"
 }
 
 
 def run_training():
     processor = DataProcessor()
     X, y = processor.load_from_folders(BASE_DATA_PATH, SHAPE_DIRS)
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42, stratify=y
+    )
 
     curr_dir = os.path.dirname(os.path.abspath(__file__))
     tuner_dir = os.path.abspath(os.path.join(curr_dir, "..", "tuning_results"))
@@ -38,8 +41,7 @@ def run_training():
         project_name='ultrasonic_shape_v2'
     )
 
-    tuner.search(X, y, epochs=30, batch_size=32)
-
+    tuner.search(X_train, y_train, epochs=100, batch_size=32)
 
     best_hps = tuner.get_best_hyperparameters(num_trials=1)[0]
     print(f"Beste Parameter gefunden! Lernrate: {best_hps.get('lr')}")
@@ -54,9 +56,9 @@ def run_training():
 
     print("Starte finales Training für maximale Genauigkeit...")
     best_model.fit(
-        X, y,
-        epochs=50,
-        validation_split=0.2,
+        X_train, y_train,
+        epochs=100,
+        validation_data=(X_test, y_test),
         callbacks=[tensorboard_callback],
         verbose=1
     )
@@ -66,7 +68,7 @@ def run_training():
     best_model.save("models/best_shape_model.keras")
 
     class_names = sorted(SHAPE_DIRS.keys())
-    dashboard = PerformanceDashboard(tuner, best_model, X, y, class_names)
+    dashboard = PerformanceDashboard(tuner, best_model, X_test, y_test, class_names)
     dashboard.plot_confusion_matrix()
     dashboard.plot_optimization_history()
     dashboard.plot_kernel_importance()
@@ -74,7 +76,3 @@ def run_training():
 
 if __name__ == "__main__":
     run_training()
-
-    #run
-    # tensorboard --logdir logs
-    # in terminal to view tensorboard for more visualization

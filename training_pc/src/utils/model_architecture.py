@@ -59,11 +59,14 @@ class HighPerfTuner(kt.Tuner):
 
         for train_idx, val_idx in kf.split(X):
             model = self.hypermodel.build(trial.hyperparameters)
-            callbacks = [keras.callbacks.EarlyStopping(monitor='val_loss', patience=3)]
+            callbacks = [keras.callbacks.EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)]
 
             history = model.fit(X[train_idx], y[train_idx],
                                 validation_data=(X[val_idx], y[val_idx]),
-                                callbacks=callbacks, **fit_kwargs)
+                                callbacks=callbacks,
+                                verbose=0,
+                                **fit_kwargs)
+
 
             val_accuracies.append(max(history.history['val_accuracy']))
 
