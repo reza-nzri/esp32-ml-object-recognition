@@ -12,8 +12,8 @@ BASE_DATA_PATH = os.path.join("data", "raw", "objects")
 
 SHAPE_DIRS = {
     "circle": "circle",
-    "hexagon": "hexagon",
-    "square": "square",
+    "oval":"oval",
+    "triangle": "triangle"
 }
 
 
@@ -24,6 +24,11 @@ def run_training():
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42, stratify=y
     )
+
+    mean = X_train.mean()
+    std = X_train.std()
+    X_train = (X_train - mean) / std
+    X_test = (X_test - mean) / std
 
     curr_dir = os.path.dirname(os.path.abspath(__file__))
     tuner_dir = os.path.abspath(os.path.join(curr_dir, "..", "tuning_results"))
@@ -54,7 +59,6 @@ def run_training():
         update_freq='epoch'
     )
 
-    print("Starte finales Training für maximale Genauigkeit...")
     best_model.fit(
         X_train, y_train,
         epochs=100,
@@ -65,13 +69,11 @@ def run_training():
 
     if not os.path.exists("models"):
         os.makedirs("models")
-    best_model.save("models/best_shape_model.keras")
+    best_model.save("models/object_recognition_model.keras")
 
     class_names = sorted(SHAPE_DIRS.keys())
     dashboard = PerformanceDashboard(tuner, best_model, X_test, y_test, class_names)
     dashboard.plot_confusion_matrix()
-    dashboard.plot_optimization_history()
-    dashboard.plot_kernel_importance()
 
 
 if __name__ == "__main__":
