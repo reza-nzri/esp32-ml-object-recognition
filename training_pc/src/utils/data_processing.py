@@ -12,9 +12,7 @@ class DataProcessor:
         self.steps = steps
 
     def clean_scan(self, raw_distances):
-        denoised = median_filter(raw_distances, size=3)
-        smoothed = savgol_filter(denoised, window_length=11, polyorder=2)
-        return smoothed
+        return median_filter(raw_distances, size=3)
 
     def process_file(self, file_path, label_idx):
         df = pd.read_csv(file_path, comment="#").dropna(subset=["distance_cm"])

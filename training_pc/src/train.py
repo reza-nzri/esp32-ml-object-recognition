@@ -13,7 +13,7 @@ BASE_DATA_PATH = os.path.join("data", "raw", "objects")
 SHAPE_DIRS = {
     "circle": "circle",
     "oval":"oval",
-    "triangle": "triangle"
+    "square": "square"
 }
 
 
@@ -25,6 +25,7 @@ def run_training():
         X, y, test_size=0.2, random_state=42, stratify=y
     )
 
+    #Z-Score
     mean = X_train.mean()
     std = X_train.std()
     X_train = (X_train - mean) / std
@@ -66,6 +67,23 @@ def run_training():
         callbacks=[tensorboard_callback],
         verbose=1
     )
+
+    from visualizations import PerformanceDashboard
+
+    history = best_model.fit(
+        X_train, y_train,
+        epochs=100,
+        validation_data=(X_test, y_test),
+        callbacks=[tensorboard_callback],
+        verbose=1
+    )
+
+    class_names = sorted(SHAPE_DIRS.keys())
+    dashboard = PerformanceDashboard(tuner, best_model, X_test, y_test, class_names)
+
+    dashboard.plot_history(history)
+
+    dashboard.plot_confusion_matrix()
 
     if not os.path.exists("models"):
         os.makedirs("models")

@@ -23,11 +23,53 @@ class PerformanceDashboard:
         cm = confusion_matrix(self.y_test, y_pred, normalize="true")
 
         plt.figure(figsize=(8, 6))
-        sns.heatmap(cm, annot=True, fmt='.2f', cmap='Blues',
-                    xticklabels=self.class_names, yticklabels=self.class_names)
+        sns.heatmap(
+            cm,
+            annot=True,
+            fmt=".2f",
+            cmap="Blues",
+            xticklabels=self.class_names,
+            yticklabels=self.class_names,
+        )
         plt.title("Confusion Matrix: Predicted vs. Actual", fontsize=14)
-        plt.ylabel('True Label')
-        plt.xlabel('Predicted Label')
+        plt.ylabel("True Label")
+        plt.xlabel("Predicted Label")
+        plt.show()
+
+    @staticmethod
+    def plot_history(history, title="Training & Validation"):
+
+        epochs = range(1, len(history.history["loss"]) + 1)
+
+        plt.figure(figsize=(12, 5))
+
+
+        plt.subplot(1, 2, 1)
+        plt.plot(epochs, history.history["loss"], "b-o", label="Training loss")
+        plt.plot(
+            epochs, history.history["val_loss"], "r-o", label="Validation loss"
+        )
+        plt.title(f"{title} – Loss")
+        plt.xlabel("Epoch")
+        plt.ylabel("Loss")
+        plt.legend()
+
+
+        if "accuracy" in history.history:
+            plt.subplot(1, 2, 2)
+            plt.plot(epochs, history.history["accuracy"], "b-o", label="Training acc")
+            plt.plot(
+                epochs,
+                history.history["val_accuracy"],
+                "r-o",
+                label="Validation acc",
+            )
+            plt.title(f"{title} – Accuracy")
+            plt.xlabel("Epoch")
+            plt.ylabel("Accuracy")
+            plt.legend()
+
+        plt.tight_layout()
         plt.show()
 
 
@@ -80,7 +122,7 @@ def plot_interactive_scans(files, labels):
 if __name__ == "__main__":
     plot_interactive_scans(
         files=["data/raw/objects/circle/circle_1cm_25_8.csv",
-               "data/raw/objects/hexagon/hexagon_plastic_25_8_15ms.csv",
+               "data/raw/objects/oval/oval_lighter_25_8.csv",
                "data/raw/objects/square/square_wood_25_8.csv"],
-        labels=["Circle", "Hexagon", "Square"]
+        labels=["Circle", "oval", "Square"]
     )
