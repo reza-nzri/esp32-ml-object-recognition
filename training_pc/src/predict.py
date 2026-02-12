@@ -11,7 +11,7 @@ def predict_shape(csv_path, model_path="models/object_recognition_model.keras"):
 
     model = tf.keras.models.load_model(model_path)
 
-    class_names = ["circle", "oval", "square"]
+    class_names = ["circle", "hexagon", "oval", "square", "triangle"]
 
     # 2. preprocessing data (has to be exact same as for training data)
     processor = DataProcessor()
@@ -40,5 +40,5 @@ def predict_shape(csv_path, model_path="models/object_recognition_model.keras"):
 
 
 if __name__ == "__main__":
-    test_file = "data/raw/objects/circle/circle_1cm_25_8.csv"
+    test_file = "data/raw/objects/hexagon/hexagon_plastic_25_8_15ms.csv"
     predict_shape(test_file)

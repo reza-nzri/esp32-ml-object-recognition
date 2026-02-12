@@ -92,7 +92,7 @@ def plot_interactive_scans(files, labels):
     combined_df = pd.concat(all_data_list, ignore_index=True)
     y_limit = combined_df['distance_cm'].max() + 5
 
-    fig, axes = plt.subplots(1, 3, figsize=(15, 7), subplot_kw={'projection': 'polar'})
+    fig, axes = plt.subplots(1, 5, figsize=(15, 7), subplot_kw={'projection': 'polar'})
     plt.subplots_adjust(bottom=0.25)
 
     lines = []
@@ -122,7 +122,9 @@ def plot_interactive_scans(files, labels):
 if __name__ == "__main__":
     plot_interactive_scans(
         files=["data/raw/objects/circle/circle_1cm_25_8.csv",
+               "data/raw/objects/hexagon/hexagon_plastic_25_8_15ms.csv",
                "data/raw/objects/oval/oval_lighter_25_8.csv",
-               "data/raw/objects/square/square_wood_25_8.csv"],
-        labels=["Circle", "oval", "Square"]
+               "data/raw/objects/square/square_wood_25_8.csv",
+               "data/raw/objects/triangle/triangle_plastic_3cm_25_8.csv "],
+        labels=["Circle", "Hexagon", "Oval", "Square", "Triangle"]
     )

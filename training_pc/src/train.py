@@ -10,7 +10,7 @@ from utils.model_architecture import build_model, HighPerfTuner, get_augmented_b
 from visualizations import PerformanceDashboard
 
 BASE_DATA_PATH = os.path.join("data", "raw", "objects")
-SHAPE_DIRS = {"circle": "circle", "oval": "oval", "square": "square"}
+SHAPE_DIRS = {"circle": "circle", "hexagon": "hexagon", "oval": "oval", "square": "square", "triangle": "triangle"}
 
 def run_training():
     processor = DataProcessor()
@@ -55,8 +55,8 @@ def run_training():
     train_dataset = tf.data.Dataset.from_generator(
         lambda: get_augmented_batch(X_train, y_train, batch_size=256),
         output_signature=(
-            tf.TensorSpec(shape=(32, 163, 1), dtype=tf.float32),
-            tf.TensorSpec(shape=(32,), dtype=tf.int32)
+            tf.TensorSpec(shape=(256, 163, 1), dtype=tf.float32),
+            tf.TensorSpec(shape=(256,), dtype=tf.int32)
         )
     )
 
